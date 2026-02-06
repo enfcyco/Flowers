@@ -18,7 +18,7 @@ body {
 header {
     background: linear-gradient(135deg, #A8D8B9 0%, #FAF6E4 100%);
     color: #6b8e71;
-    padding: 2rem 0;
+    padding: 2rem 1rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     position: sticky;
     top: 0;
@@ -106,12 +106,12 @@ article:hover {
 }
 
 article img {
-    max-width: 100%;
+    max-width: 45%;
     height: auto;
     border-radius: 8px;
-    margin: 1rem 0;
+    margin: 1rem 0.5rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    display: block;
+    display: inline-block;
 }
 
 .article-decoration {
@@ -168,4 +168,13 @@ button:hover, .btn:hover {
     width: 32px;
     height: 32px;
     vertical-align: middle;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+    article img {
+        max-width: 100%;
+        display: block;
+        margin: 1rem auto;
+    }
 }
