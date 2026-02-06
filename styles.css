@@ -8,12 +8,12 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    background: linear-gradient(135deg, #f5f3f0 0%, #ece8e3 100%);
     min-height: 100vh;
 }
 
 header {
-    background: linear-gradient(135deg, #d946a6 0%, #ec4899 100%);
+    background: linear-gradient(135deg, #A8D8B9 0%, #FAF6E4 100%);
     color: white;
     padding: 2rem 0;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -61,7 +61,7 @@ main {
 section h2 {
     text-align: center;
     font-size: 2.2rem;
-    color: #d946a6;
+    color: #6b8e71;
     margin-bottom: 3rem;
     position: relative;
     padding-bottom: 1rem;
@@ -75,7 +75,7 @@ section h2::after {
     transform: translateX(-50%);
     width: 60px;
     height: 4px;
-    background: linear-gradient(90deg, #d946a6, #ec4899);
+    background: linear-gradient(90deg, #6b8e71, #7a9e84);
     border-radius: 2px;
 }
 
@@ -93,13 +93,13 @@ article {
 
 article:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(217, 70, 166, 0.2);
+    box-shadow: 0 15px 40px rgba(107, 142, 113, 0.2);
 }
 
 .article-image {
     grid-column: 1;
     grid-row: 1 / 4;
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    background: linear-gradient(135deg, #f5f3f0 0%, #ece8e3 100%);
     min-height: 250px;
     display: flex;
     align-items: center;
@@ -111,7 +111,7 @@ article:hover {
 article h3 {
     grid-column: 2;
     grid-row: 1;
-    color: #d946a6;
+    color: #6b8e71;
     font-size: 1.5rem;
     padding: 1.5rem 1.5rem 0.5rem 1.5rem;
 }
@@ -130,7 +130,7 @@ article a {
     align-self: end;
     margin: 1rem 1.5rem 1.5rem 1.5rem;
     display: inline-block;
-    background: linear-gradient(135deg, #d946a6, #ec4899);
+    background: linear-gradient(135deg, #6b8e71, #7a9e84);
     color: white;
     padding: 0.7rem 1.5rem;
     border-radius: 25px;
@@ -142,13 +142,13 @@ article a {
 
 article a:hover {
     background: white;
-    color: #d946a6;
-    border-color: #d946a6;
+    color: #6b8e71;
+    border-color: #6b8e71;
     transform: scale(1.05);
 }
 
 footer {
-    background: linear-gradient(135deg, #d946a6 0%, #ec4899 100%);
+    background: linear-gradient(135deg, #6b8e71 0%, #7a9e84 100%);
     color: white;
     text-align: center;
     padding: 2rem;
