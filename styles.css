@@ -172,11 +172,6 @@ button:hover, .btn:hover {
 
 /* Mobile responsive styles */
 @media (max-width: 768px) {
-    header h1 {
-        padding: 0 1rem;
-        text-align: center;
-    }
-    
     article img {
         max-width: 100%;
         display: block;
