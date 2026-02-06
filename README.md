@@ -1,6 +1,6 @@
 # Flowers
 
-This repository contains various flower specimens and their details for educational and decorative purposes.
+This repository contains various flower specimens and their details for educational and decorative purposes. You can view the site on GitHub Pages here: [enfcyco.github.io/Flowers](https://enfcyco.github.io/Flowers/).
 
 ## Contributing
 
