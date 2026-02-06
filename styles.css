@@ -28,6 +28,15 @@ header {
     align-items: center;
 }
 
+.header-subtitle {
+    color: #6b8e71;
+    font-size: 1.1rem;
+    font-style: italic;
+    margin-top: 0.5rem;
+    text-align: center;
+    opacity: 0.85;
+}
+
 .header-decoration {
     margin-top: 1rem;
     display: flex;
