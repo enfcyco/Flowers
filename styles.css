@@ -81,6 +81,7 @@ nav a.active {
     box-shadow: 0 2px 8px rgba(107, 142, 113, 0.3);
     font-weight: 700;
     border-bottom: 3px solid #FAF6E4;
+    cursor: default;
 }
 
 main {
