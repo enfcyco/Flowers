@@ -21,6 +21,12 @@
         return modal;
     }
 
+    // Close modal helper function
+    function closeModal(modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
     // Initialize when DOM is ready
     function init() {
         const modal = createModal();
@@ -32,10 +38,6 @@
 
         // Add click/touch handlers to each image
         images.forEach(img => {
-            // Make images look clickable
-            img.style.cursor = 'pointer';
-            
-            // Click/touch handler
             img.addEventListener('click', function() {
                 modal.style.display = 'flex';
                 modalImg.src = this.src;
@@ -47,23 +49,20 @@
 
         // Close modal when clicking the X button
         closeBtn.addEventListener('click', function() {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            closeModal(modal);
         });
 
         // Close modal when clicking outside the image
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
+                closeModal(modal);
             }
         });
 
         // Close modal on ESC key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && modal.style.display === 'flex') {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
+                closeModal(modal);
             }
         });
     }
