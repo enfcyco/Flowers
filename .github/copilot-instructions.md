@@ -88,3 +88,90 @@ When creating Pull Requests:
 - The site automatically deploys from the main branch
 - Changes may take a few minutes to appear after merge
 - Test locally before pushing to ensure proper rendering
+
+## Image Optimization Guidelines
+
+**CRITICAL**: All images MUST be optimized before adding to the repository to ensure fast page loads, especially on mobile devices.
+
+### Why Image Optimization Matters
+
+- **Performance**: Unoptimized high-res phone photos (5712x4284px, 8.5MB) take 3+ minutes to load on 3G
+- **Mobile Experience**: 81% reduction in file size dramatically improves mobile browsing
+- **SEO**: Google penalizes slow-loading sites
+- **User Experience**: Fast load times keep visitors engaged
+
+### Image Optimization Requirements
+
+When adding new images to the blog:
+
+1. **Maximum Dimensions**: 1920px width (maintains aspect ratio)
+   - Web displays max out at ~1920px width for desktop
+   - Images larger than this waste bandwidth with no visual benefit
+   
+2. **JPEG Quality**: 85% compression
+   - Provides excellent visual quality
+   - Significantly reduces file size
+   - Imperceptible quality loss
+
+3. **Expected File Sizes**:
+   - Typical optimized image: 400-800KB (down from 3-8MB)
+   - Total page load should stay under 5-10MB
+
+### How to Optimize Images
+
+#### Quick Method (Using ImageMagick + jpegoptim):
+
+```bash
+# Install tools (if needed)
+sudo apt install imagemagick jpegoptim
+
+# Optimize a single image
+convert input.jpeg -resize "1920x>" -quality 85 output.jpeg
+jpegoptim --max=85 --strip-all output.jpeg
+
+# Or optimize all images in a directory
+find images -type f \( -iname "*.jpg" -o -iname "*.jpeg" \) | while read img; do
+    width=$(identify -format "%w" "$img")
+    if [ "$width" -gt 1920 ]; then
+        convert "$img" -resize "1920x>" -quality 85 "$img.tmp"
+        mv "$img.tmp" "$img"
+    else
+        convert "$img" -quality 85 "$img.tmp"
+        mv "$img.tmp" "$img"
+    fi
+    jpegoptim --max=85 --strip-all "$img"
+done
+```
+
+#### Online Tools (No Installation):
+
+- [TinyJPG](https://tinyjpg.com/) - Simple drag-and-drop
+- [Squoosh](https://squoosh.app/) - Advanced settings with preview
+- [ImageOptim](https://imageoptim.com/) - Mac app
+
+### Optimization Checklist
+
+Before committing images:
+- [ ] Images resized to max 1920px width
+- [ ] JPEG quality set to 85%
+- [ ] Verify file sizes are reasonable (400-800KB typical)
+- [ ] Test images display correctly in browser
+- [ ] Compare visual quality (should be imperceptible difference)
+
+### Performance Benchmarks
+
+- **Before Optimization**: 26MB total (8.5MB largest image)
+  - 3G load time: ~5 minutes
+  - 4G load time: ~45 seconds
+  
+- **After Optimization**: 4.9MB total (1MB largest image)
+  - 3G load time: ~15 seconds (95% faster)
+  - 4G load time: ~2 seconds (96% faster)
+
+### Future Enhancements (Optional)
+
+Consider these for even better performance:
+- Responsive images using `<picture>` or `srcset` attributes
+- WebP format with JPEG fallback (25-35% smaller)
+- Lazy loading for images below the fold
+- CDN for image delivery
