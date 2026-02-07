@@ -78,9 +78,9 @@ nav a:hover {
 nav a.active {
     background: #6b8e71;
     color: #FAF6E4;
-    box-shadow: 0 2px 8px rgba(107, 142, 113, 0.3);
+    box-shadow: 0 4px 12px rgba(107, 142, 113, 0.4);
     font-weight: 700;
-    border-bottom: 3px solid #FAF6E4;
+    transform: scale(1.05);
     cursor: default;
 }
 
