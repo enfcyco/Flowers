@@ -154,6 +154,10 @@ article img {
     cursor: pointer;
 }
 
+article img.small-image {
+    max-width: 22.5%;
+}
+
 .article-decoration {
     position: absolute;
     top: 1rem;
@@ -282,6 +286,10 @@ button:hover, .btn:hover {
         max-width: 100%;
         display: block;
         margin: 1rem auto;
+    }
+    
+    article img.small-image {
+        max-width: 50%;
     }
     
     .modal-close {
