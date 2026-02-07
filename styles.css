@@ -265,19 +265,30 @@ button:hover, .btn:hover {
 
 .modal-close {
     position: absolute;
-    top: -40px;
+    top: -50px;
     right: 0;
-    color: #FAF6E4;
+    color: white;
     font-size: 40px;
     font-weight: bold;
     cursor: pointer;
-    transition: color 0.3s ease;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    text-shadow: none;
+    line-height: 1;
 }
 
 .modal-close:hover,
 .modal-close:focus {
-    color: #A8D8B9;
+    background: rgba(107, 142, 113, 0.95);
+    border-color: white;
+    transform: scale(1.1);
 }
 
 /* Mobile responsive styles */
@@ -296,6 +307,8 @@ button:hover, .btn:hover {
         top: 10px;
         right: 10px;
         font-size: 35px;
+        width: 40px;
+        height: 40px;
     }
 }
 
