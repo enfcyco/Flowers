@@ -78,7 +78,7 @@ When making changes:
 When creating Pull Requests:
 - **Always include before/after screenshots** for any visual changes (UI, layout, styling)
 - Organize screenshots with clear labels: "Before" and "After"
-- Test and capture screenshots on both desktop and mobile viewports when relevant
+- Test and capture screenshots on both desktop and mobile viewports always
 - Include screenshots in the PR description to help reviewers quickly understand the impact
 - For desktop screenshots, use viewport around 1200x900 or similar
 - For mobile screenshots, use viewport around 375x667 (iPhone size) or similar
