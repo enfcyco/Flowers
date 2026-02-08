@@ -93,7 +93,36 @@ When creating Pull Requests:
 
 **CRITICAL**: All images MUST be optimized before adding to the repository to ensure fast page loads, especially on mobile devices.
 
-### Why Image Optimization Matters
+### Automated Workflow (Preferred Method)
+
+When a user drops images in the root directory and asks to "optimize images" or "optimize new images":
+
+1. **Check for images in root**: Look for `.jpeg`, `.jpg`, `.JPEG`, or `.JPG` files in the repository root
+2. **Guide the user**: Explain that they need to trigger the GitHub Actions workflow
+   - URL: https://github.com/enfcyco/Flowers/actions/workflows/optimize-images.yml
+   - Click "Run workflow" button
+   - Leave inputs empty to auto-detect all images in root, or specify specific filenames
+3. **The workflow automatically**:
+   - Generates 3 versions: web (1920px max), Instagram (1080x1080), Facebook (1200x630)
+   - Moves all to `images/YYYY-MM-DD/` directory
+   - Deletes originals from root
+   - Commits with optimization statistics
+
+**Output naming convention**:
+- Web version: `filename-web.jpeg` (for website use)
+- Instagram: `filename-instagram.jpeg` (1080x1080 square)
+- Facebook: `filename-facebook.jpeg` (1200x630 landscape)
+
+**Usage in HTML**:
+```html
+<img src="images/2026-02-08/photo-web.jpeg" alt="Description">
+```
+
+For more details, see: `.github/IMAGE-OPTIMIZATION-GUIDE.md`
+
+### Manual Optimization (Alternative)
+
+If automation is not available, use ImageMagick + jpegoptim:
 
 - **Performance**: Unoptimized high-res phone photos (5712x4284px, 8.5MB) take 3+ minutes to load on 3G
 - **Mobile Experience**: 81% reduction in file size dramatically improves mobile browsing
