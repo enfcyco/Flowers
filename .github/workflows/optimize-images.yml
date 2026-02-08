@@ -1,0 +1,194 @@
+name: Optimize Images
+
+on:
+  workflow_dispatch:
+    inputs:
+      images:
+        description: 'Image filenames in root directory (comma-separated, e.g., "IMG_1234.jpeg,photo.jpg") or leave empty to auto-detect'
+        required: false
+        type: string
+      date:
+        description: 'Target date directory (YYYY-MM-DD format, defaults to today)'
+        required: false
+        type: string
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Need write permission to commit optimized images
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Install image optimization tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick jpegoptim
+          
+      - name: Optimize images
+        id: optimize
+        run: |
+          # Set target date (use input or today's date)
+          if [ -n "${{ inputs.date }}" ]; then
+            TARGET_DATE="${{ inputs.date }}"
+          else
+            TARGET_DATE=$(date +%Y-%m-%d)
+          fi
+          
+          echo "Target date: $TARGET_DATE"
+          
+          # Create target directory
+          mkdir -p "images/$TARGET_DATE"
+          
+          # Determine which images to process
+          if [ -n "${{ inputs.images }}" ]; then
+            # Process specified images
+            IFS=',' read -ra IMAGE_ARRAY <<< "${{ inputs.images }}"
+            IMAGES=()
+            for img in "${IMAGE_ARRAY[@]}"; do
+              # Trim whitespace
+              img=$(echo "$img" | xargs)
+              [ -f "$img" ] && IMAGES+=("$img")
+            done
+          else
+            # Auto-detect JPEG/JPG images in root directory using find for safety
+            IMAGES=()
+            while IFS= read -r -d '' file; do
+              IMAGES+=("$file")
+            done < <(find . -maxdepth 1 -type f \( -iname "*.jpeg" -o -iname "*.jpg" \) -print0)
+          fi
+          
+          if [ ${#IMAGES[@]} -eq 0 ]; then
+            echo "ERROR: No images found to optimize"
+            echo "Please add images to the root directory or specify image names"
+            exit 1
+          fi
+          
+          echo "Found ${#IMAGES[@]} image(s) to optimize"
+          
+          # Initialize statistics
+          TOTAL_ORIGINAL_SIZE=0
+          TOTAL_WEB_SIZE=0
+          TOTAL_INSTAGRAM_SIZE=0
+          TOTAL_FACEBOOK_SIZE=0
+          STATS_OUTPUT=""
+          
+          # Process each image
+          for img in "${IMAGES[@]}"; do
+            # Skip if file doesn't exist
+            [ ! -f "$img" ] && continue
+            
+            # Get original image info
+            ORIGINAL_SIZE=$(stat -c%s "$img")
+            ORIGINAL_DIMS=$(identify -format "%wx%h" "$img")
+            ORIGINAL_SIZE_MB=$(echo "scale=2; $ORIGINAL_SIZE / 1024 / 1024" | bc)
+            
+            # Extract base filename without extension
+            BASENAME="${img%.*}"
+            
+            echo "Processing $img ($ORIGINAL_SIZE_MB MB, $ORIGINAL_DIMS)..."
+            
+            # 1. Web version (1920px max width, maintain aspect ratio)
+            echo "  Creating web version..."
+            convert "$img" -resize "1920x>" -quality 85 "images/$TARGET_DATE/${BASENAME}-web.jpeg"
+            jpegoptim --max=85 --strip-all "images/$TARGET_DATE/${BASENAME}-web.jpeg" > /dev/null 2>&1
+            WEB_SIZE=$(stat -c%s "images/$TARGET_DATE/${BASENAME}-web.jpeg")
+            WEB_SIZE_KB=$(echo "scale=0; $WEB_SIZE / 1024" | bc)
+            WEB_DIMS=$(identify -format "%wx%h" "images/$TARGET_DATE/${BASENAME}-web.jpeg")
+            WEB_REDUCTION=$(echo "scale=0; 100 - ($WEB_SIZE * 100 / $ORIGINAL_SIZE)" | bc)
+            
+            # 2. Instagram version (1080x1080 square crop, centered)
+            echo "  Creating Instagram version..."
+            convert "$img" -resize "1080x1080^" -gravity center -extent 1080x1080 -quality 85 "images/$TARGET_DATE/${BASENAME}-instagram.jpeg"
+            jpegoptim --max=85 --strip-all "images/$TARGET_DATE/${BASENAME}-instagram.jpeg" > /dev/null 2>&1
+            INSTAGRAM_SIZE=$(stat -c%s "images/$TARGET_DATE/${BASENAME}-instagram.jpeg")
+            INSTAGRAM_SIZE_KB=$(echo "scale=0; $INSTAGRAM_SIZE / 1024" | bc)
+            INSTAGRAM_REDUCTION=$(echo "scale=0; 100 - ($INSTAGRAM_SIZE * 100 / $ORIGINAL_SIZE)" | bc)
+            
+            # 3. Facebook version (1200x630 landscape crop)
+            echo "  Creating Facebook version..."
+            convert "$img" -resize "1200x630^" -gravity center -extent 1200x630 -quality 85 "images/$TARGET_DATE/${BASENAME}-facebook.jpeg"
+            jpegoptim --max=85 --strip-all "images/$TARGET_DATE/${BASENAME}-facebook.jpeg" > /dev/null 2>&1
+            FACEBOOK_SIZE=$(stat -c%s "images/$TARGET_DATE/${BASENAME}-facebook.jpeg")
+            FACEBOOK_SIZE_KB=$(echo "scale=0; $FACEBOOK_SIZE / 1024" | bc)
+            FACEBOOK_REDUCTION=$(echo "scale=0; 100 - ($FACEBOOK_SIZE * 100 / $ORIGINAL_SIZE)" | bc)
+            
+            # Remove original image from root
+            echo "  Removing original from root..."
+            rm "$img"
+            
+            # Accumulate statistics
+            TOTAL_ORIGINAL_SIZE=$((TOTAL_ORIGINAL_SIZE + ORIGINAL_SIZE))
+            TOTAL_WEB_SIZE=$((TOTAL_WEB_SIZE + WEB_SIZE))
+            TOTAL_INSTAGRAM_SIZE=$((TOTAL_INSTAGRAM_SIZE + INSTAGRAM_SIZE))
+            TOTAL_FACEBOOK_SIZE=$((TOTAL_FACEBOOK_SIZE + FACEBOOK_SIZE))
+            
+            # Build stats output
+            STATS_OUTPUT="${STATS_OUTPUT}
+          ${BASENAME}:
+            Original: ${ORIGINAL_SIZE_MB}MB ($ORIGINAL_DIMS)
+            Web: ${WEB_SIZE_KB}KB ($WEB_DIMS) - ${WEB_REDUCTION}% smaller ✓
+            Instagram: ${INSTAGRAM_SIZE_KB}KB (1080x1080) - ${INSTAGRAM_REDUCTION}% smaller ✓
+            Facebook: ${FACEBOOK_SIZE_KB}KB (1200x630) - ${FACEBOOK_REDUCTION}% smaller ✓
+          "
+            
+            echo "  ✓ Done processing $img"
+          done
+          
+          # Calculate total statistics
+          TOTAL_OPTIMIZED_SIZE=$((TOTAL_WEB_SIZE + TOTAL_INSTAGRAM_SIZE + TOTAL_FACEBOOK_SIZE))
+          TOTAL_SAVED=$((TOTAL_ORIGINAL_SIZE - TOTAL_OPTIMIZED_SIZE))
+          TOTAL_SAVED_MB=$(echo "scale=1; $TOTAL_SAVED / 1024 / 1024" | bc)
+          TOTAL_ORIGINAL_MB=$(echo "scale=1; $TOTAL_ORIGINAL_SIZE / 1024 / 1024" | bc)
+          TOTAL_OPTIMIZED_MB=$(echo "scale=1; $TOTAL_OPTIMIZED_SIZE / 1024 / 1024" | bc)
+          
+          # Calculate load time improvement (rough estimate: 3Mbps 3G speed)
+          ORIGINAL_LOAD_TIME=$((TOTAL_ORIGINAL_SIZE / 1024 / 384))  # seconds
+          OPTIMIZED_LOAD_TIME=$((TOTAL_OPTIMIZED_SIZE / 1024 / 384))  # seconds
+          
+          # Format load times
+          if [ $ORIGINAL_LOAD_TIME -ge 60 ]; then
+            ORIGINAL_LOAD_FORMATTED="$((ORIGINAL_LOAD_TIME / 60))m $((ORIGINAL_LOAD_TIME % 60))s"
+          else
+            ORIGINAL_LOAD_FORMATTED="${ORIGINAL_LOAD_TIME}s"
+          fi
+          
+          if [ $OPTIMIZED_LOAD_TIME -ge 60 ]; then
+            OPTIMIZED_LOAD_FORMATTED="$((OPTIMIZED_LOAD_TIME / 60))m $((OPTIMIZED_LOAD_TIME % 60))s"
+          else
+            OPTIMIZED_LOAD_FORMATTED="${OPTIMIZED_LOAD_TIME}s"
+          fi
+          
+          # Create summary
+          SUMMARY="✅ Optimized ${#IMAGES[@]} image(s) in images/$TARGET_DATE/
+          $STATS_OUTPUT
+          Total space saved: ${TOTAL_SAVED_MB}MB
+          Load time improvement (3G): ${ORIGINAL_LOAD_FORMATTED} → ${OPTIMIZED_LOAD_FORMATTED}"
+          
+          echo "$SUMMARY"
+          
+          # Save summary for next step
+          echo "$SUMMARY" > /tmp/optimization-summary.txt
+          echo "target_date=$TARGET_DATE" >> $GITHUB_OUTPUT
+          
+      - name: Commit optimized images
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add images/
+          git commit -m "Add optimized images to images/${{ steps.optimize.outputs.target_date }}
+          
+          $(cat /tmp/optimization-summary.txt)"
+          git push
+          
+      - name: Display summary
+        run: |
+          echo "========================================="
+          echo "IMAGE OPTIMIZATION COMPLETE"
+          echo "========================================="
+          cat /tmp/optimization-summary.txt
+          echo ""
+          echo "Images have been committed and pushed to the repository."
+          echo "View them at: images/${{ steps.optimize.outputs.target_date }}/"
