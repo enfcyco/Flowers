@@ -51,7 +51,7 @@ IMG_5536:
   Facebook: 189KB (1200x630) - 98% smaller ✓
 
 Total space saved: 23.5MB
-Load time improvement (3G): 3m 5s → 15s
+Load time improvement (3G): ~3m → ~15s (example, varies by image)
 ```
 
 ## Using in Your Blog

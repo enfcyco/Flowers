@@ -44,10 +44,18 @@ jobs:
           if [ -n "${{ inputs.images }}" ]; then
             # Process specified images
             IFS=',' read -ra IMAGE_ARRAY <<< "${{ inputs.images }}"
-            IMAGES=("${IMAGE_ARRAY[@]}")
+            IMAGES=()
+            for img in "${IMAGE_ARRAY[@]}"; do
+              # Trim whitespace
+              img=$(echo "$img" | xargs)
+              [ -f "$img" ] && IMAGES+=("$img")
+            done
           else
-            # Auto-detect JPEG/JPG images in root directory
-            IMAGES=($(ls *.jpeg *.jpg *.JPEG *.JPG 2>/dev/null || true))
+            # Auto-detect JPEG/JPG images in root directory using find for safety
+            IMAGES=()
+            while IFS= read -r -d '' file; do
+              IMAGES+=("$file")
+            done < <(find . -maxdepth 1 -type f \( -iname "*.jpeg" -o -iname "*.jpg" \) -print0)
           fi
           
           if [ ${#IMAGES[@]} -eq 0 ]; then
@@ -155,8 +163,6 @@ jobs:
           SUMMARY="✅ Optimized ${#IMAGES[@]} image(s) in images/$TARGET_DATE/
           $STATS_OUTPUT
           Total space saved: ${TOTAL_SAVED_MB}MB
-          Total original size: ${TOTAL_ORIGINAL_MB}MB
-          Total optimized size: ${TOTAL_OPTIMIZED_MB}MB
           Load time improvement (3G): ${ORIGINAL_LOAD_FORMATTED} → ${OPTIMIZED_LOAD_FORMATTED}"
           
           echo "$SUMMARY"

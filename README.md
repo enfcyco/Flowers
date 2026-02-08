@@ -19,6 +19,22 @@ Flowers/
 
 ## Adding Images to Blog Entries
 
+### 🚀 Automated Method (Easiest)
+
+1. Drop your raw images in the **root directory**
+2. Say to Copilot: **"Optimize new images"**
+3. Or manually trigger: [Actions > Optimize Images](https://github.com/enfcyco/Flowers/actions/workflows/optimize-images.yml)
+
+The workflow will automatically:
+- Generate web, Instagram, and Facebook versions
+- Move them to `images/YYYY-MM-DD/`
+- Remove originals
+- Show optimization stats
+
+See [QUICK-START-IMAGE-OPTIMIZATION.md](QUICK-START-IMAGE-OPTIMIZATION.md) for details.
+
+### Manual Method
+
 Images are organized by date in the `images/` directory:
 
 1. Create a new directory in `images/` with the date in `YYYY-MM-DD` format
