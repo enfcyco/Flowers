@@ -1,9 +1,15 @@
-# Issue 2: Accessibility Improvements (WCAG 2.1 AA Compliance)
+---
+name: Accessibility Improvements (WCAG 2.1 AA)
+about: Improve website accessibility for all users including screen readers and keyboard navigation
+title: '[Accessibility] WCAG 2.1 AA Compliance Improvements'
+labels: enhancement, accessibility, a11y
+assignees: ''
+---
 
-## Summary
+## 🎯 Summary
 Improve website accessibility to ensure all users, including those using screen readers, keyboard navigation, or with visual impairments, can fully experience the site.
 
-## Problem
+## 📋 Problem
 Current accessibility gaps:
 - Missing ARIA labels on interactive elements
 - No skip-to-content link for keyboard users
@@ -12,7 +18,7 @@ Current accessibility gaps:
 - Color contrast might not meet WCAG AA standards in some areas
 - Missing landmark roles for screen readers
 
-## Proposed Solution
+## 💡 Proposed Solution
 
 ### 1. Semantic HTML & ARIA Improvements
 
@@ -146,7 +152,7 @@ Verify all pages have:
 ```
 ✅ Already present - good!
 
-## Implementation Checklist
+## ✅ Implementation Checklist
 
 - [ ] Add skip-to-content link to all pages
 - [ ] Add ARIA landmarks (navigation, main, contentinfo)
@@ -160,22 +166,22 @@ Verify all pages have:
 - [ ] Test full keyboard navigation (no mouse)
 - [ ] Run automated accessibility audit (axe DevTools, Lighthouse)
 
-## Testing Tools
+## 🧪 Testing Tools
 
-1. **Automated Testing:**
-   - Chrome Lighthouse Accessibility Audit
-   - axe DevTools browser extension
-   - WAVE browser extension
+### 1. Automated Testing:
+- Chrome Lighthouse Accessibility Audit
+- axe DevTools browser extension
+- WAVE browser extension
 
-2. **Manual Testing:**
-   - Navigate entire site using only keyboard (Tab, Enter, Escape)
-   - Test with screen reader (VoiceOver on Mac, NVDA on Windows)
+### 2. Manual Testing:
+- Navigate entire site using only keyboard (Tab, Enter, Escape)
+- Test with screen reader (VoiceOver on Mac, NVDA on Windows)
 
-3. **Contrast Checking:**
-   - WebAIM Contrast Checker
-   - Chrome DevTools color picker contrast ratio
+### 3. Contrast Checking:
+- WebAIM Contrast Checker
+- Chrome DevTools color picker contrast ratio
 
-## Benefits
+## 🎯 Benefits
 
 - Inclusive design for all users
 - Better SEO (search engines favor accessible sites)
@@ -183,8 +189,8 @@ Verify all pages have:
 - Improved usability for everyone
 - Professional, modern web standards
 
-## Implementation Complexity
+## 📊 Implementation Complexity
 **Medium** - Mostly HTML/CSS changes, some JavaScript improvements
 
-## Estimated Impact
+## 🎯 Estimated Impact
 **High** - Makes the site usable for 15-20% more users, improves SEO, demonstrates professional quality
