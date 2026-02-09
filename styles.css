@@ -5,6 +5,27 @@
     box-sizing: border-box;
 }
 
+/* Skip to content link for keyboard navigation */
+.skip-to-content {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 999;
+    background: #6b8e71;
+    color: #FAF6E4;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    border-radius: 0 0 8px 8px;
+    font-weight: 600;
+}
+
+.skip-to-content:focus {
+    left: 50%;
+    transform: translateX(-50%);
+    outline: 3px solid #4a5f4d;
+    outline-offset: 2px;
+}
+
 /* Cream gradient background */
 body {
     font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -73,6 +94,12 @@ nav a {
 nav a:hover {
     background: #FAF6E4;
     color: #8BBC8A;
+}
+
+nav a:focus {
+    outline: 3px solid #4a5f4d;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(107, 142, 113, 0.2);
 }
 
 nav a.active {
@@ -155,6 +182,11 @@ article img {
     cursor: pointer;
 }
 
+article img:focus {
+    outline: 3px solid #4a5f4d;
+    outline-offset: 2px;
+}
+
 article img.small-image {
     max-width: 22.5%;
 }
@@ -201,6 +233,11 @@ button, .btn {
 button:hover, .btn:hover {
     background: #FAF6E4;
     color: #6b8e71;
+}
+
+button:focus, .btn:focus {
+    outline: 3px solid #4a5f4d;
+    outline-offset: 2px;
 }
 
 .flower-icon {
@@ -290,6 +327,8 @@ button:hover, .btn:hover {
     background: rgba(107, 142, 113, 0.95);
     border-color: white;
     transform: scale(1.1);
+    outline: 3px solid white;
+    outline-offset: 2px;
 }
 
 /* Mobile responsive styles */
