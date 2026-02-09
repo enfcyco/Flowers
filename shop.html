@@ -24,21 +24,22 @@
     <script src="image-popover.js" defer></script>
 </head>
 <body>
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
     <header>
         <h1>Shop</h1>
         <p class="header-subtitle">Fresh flowers and seasonal products from Hodge Podge Farms</p>
     </header>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="shop.html" class="active">Shop</a></li>
+    <nav role="navigation" aria-label="Main navigation">
+        <ul role="menubar">
+            <li role="none"><a href="index.html" role="menuitem">Home</a></li>
+            <li role="none"><a href="about.html" role="menuitem">About</a></li>
+            <li role="none"><a href="shop.html" class="active" role="menuitem" aria-current="page">Shop</a></li>
         </ul>
     </nav>
-    <main>
-        <section class="shop-container">
-            <div class="product-tile">
-                <h2>Flower Stem Bunches</h2>
+    <main id="main-content" role="main" aria-label="Shop products">
+        <section class="shop-container" aria-label="Available products">
+            <div class="product-tile" role="article" aria-labelledby="product-flower-stems">
+                <h2 id="product-flower-stems">Flower Stem Bunches</h2>
                 <div class="product-details">
                     <p class="product-description">Beautiful fresh-cut flower stems from our garden</p>
                     <p class="product-price">$10</p>
@@ -47,8 +48,8 @@
                 </div>
                 <a href="about.html" class="btn">Contact Us to Order</a>
             </div>
-            <div class="product-tile">
-                <h2>Pumpkins & Gourds</h2>
+            <div class="product-tile" role="article" aria-labelledby="product-pumpkins-gourds">
+                <h2 id="product-pumpkins-gourds">Pumpkins & Gourds</h2>
                 <div class="product-details">
                     <p class="product-description">Seasonal pumpkins and decorative gourds</p>
                     <p class="product-availability">Available in Fall</p>
@@ -58,7 +59,7 @@
             </div>
         </section>
     </main>
-    <footer>
+    <footer role="contentinfo" aria-label="Site footer">
         <p>&copy; 2026 Hodge Podge Farms. All rights reserved.</p>
     </footer>
 </body>

@@ -22,27 +22,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="image-popover.js" defer></script>
+</head>
 <body>
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
     <header>
         <h1>About Us</h1>
     </header>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="about.html" class="active">About</a></li>
-            <li><a href="shop.html">Shop</a></li>
+    <nav role="navigation" aria-label="Main navigation">
+        <ul role="menubar">
+            <li role="none"><a href="index.html" role="menuitem">Home</a></li>
+            <li role="none"><a href="about.html" class="active" role="menuitem" aria-current="page">About</a></li>
+            <li role="none"><a href="shop.html" role="menuitem">Shop</a></li>
         </ul>
     </nav>
-    <main>
-        <article>
-            <h2>Contact Information</h2>
+    <main id="main-content" role="main" aria-label="About Hodge Podge Farms">
+        <article role="article" aria-labelledby="contact-heading">
+            <h2 id="contact-heading">Contact Information</h2>
             <p><strong>Hodge Podge Farms</strong></p>
             <p>28689 595 Ave</p>
             <p>Cambridge IA 50041</p>
             <p>Email: <a href="mailto:hodgepodge@reedpages.com">hodgepodge@reedpages.com</a></p>
         </article>
     </main>
-    <footer>
+    <footer role="contentinfo" aria-label="Site footer">
         <p>&copy; 2026 Hodge Podge Farms. All rights reserved.</p>
     </footer>
 </body>

@@ -5,6 +5,27 @@
     box-sizing: border-box;
 }
 
+/* Skip to content link for keyboard navigation */
+.skip-to-content {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 999;
+    background: #6b8e71;
+    color: #FAF6E4;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    border-radius: 0 0 8px 8px;
+    font-weight: 600;
+}
+
+.skip-to-content:focus {
+    left: 50%;
+    transform: translateX(-50%);
+    outline: 3px solid #4a5f4d;
+    outline-offset: 2px;
+}
+
 /* Cream gradient background */
 body {
     font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -60,7 +81,7 @@ nav ul {
 }
 
 nav a {
-    color: #6b8e71;
+    color: #3d5343;
     text-decoration: none;
     font-weight: 600;
     font-size: 1.1rem;
@@ -72,12 +93,18 @@ nav a {
 
 nav a:hover {
     background: #FAF6E4;
-    color: #8BBC8A;
+    color: #3d5343;
+}
+
+nav a:focus {
+    outline: 3px solid #4a5f4d;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(107, 142, 113, 0.2);
 }
 
 nav a.active {
-    background: #6b8e71;
-    color: #FAF6E4;
+    background: #4a5f4d;
+    color: #FFFFFF;
     box-shadow: 0 4px 12px rgba(107, 142, 113, 0.4);
     font-weight: 700;
     transform: scale(1.05);
@@ -155,6 +182,11 @@ article img {
     cursor: pointer;
 }
 
+article img:focus {
+    outline: 3px solid #4a5f4d;
+    outline-offset: 2px;
+}
+
 article img.small-image {
     max-width: 22.5%;
 }
@@ -185,22 +217,27 @@ footer {
 }
 
 button, .btn {
-    background: #8bbc8a;
-    color: #FAF6E4;
+    background: #5a7c58;
+    color: #FFFFFF;
     border: none;
     border-radius: 6px;
     padding: 0.7rem 1.4rem;
     font-size: 1.05rem;
     font-weight: 500;
-    box-shadow: 0 2px 10px #8bbc8a22;
+    box-shadow: 0 2px 10px rgba(90, 124, 88, 0.3);
     margin: 0.5rem;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
 }
 
 button:hover, .btn:hover {
-    background: #FAF6E4;
-    color: #6b8e71;
+    background: #4a5f4d;
+    color: #FFFFFF;
+}
+
+button:focus, .btn:focus {
+    outline: 3px solid #4a5f4d;
+    outline-offset: 2px;
 }
 
 .flower-icon {
@@ -290,6 +327,8 @@ button:hover, .btn:hover {
     background: rgba(107, 142, 113, 0.95);
     border-color: white;
     transform: scale(1.1);
+    outline: 3px solid white;
+    outline-offset: 2px;
 }
 
 /* Mobile responsive styles */
