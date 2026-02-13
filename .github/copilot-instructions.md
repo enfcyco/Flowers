@@ -48,7 +48,7 @@ When creating or updating blog posts:
    - Write straightforward, factual descriptions
    - Focus on what is shown, not flowery language
    - Include specific details: plant varieties, locations, dates, quantities
-   - Example (good): "Picked up Bachelor Button 'Blue Boy' seeds at Wal-Mart."
+   - Example (good): "Picked up Bachelor Button 'Blue Boy' seeds at Walmart."
    - Example (avoid): "We discovered the most enchanting azure bachelor buttons that will dance gracefully in the garden breeze."
 
 2. **Keep it Concise**
