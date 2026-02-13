@@ -40,6 +40,28 @@ This is a static HTML/CSS website for a flower blog hosted on GitHub Pages. The 
 - Keep blog entries in reverse chronological order (newest first)
 - Maintain the friendly, personal tone of existing content
 
+### Blog Post Writing Guidelines
+
+When creating or updating blog posts:
+
+1. **Be Factual and Informative**
+   - Write straightforward, factual descriptions
+   - Focus on what is shown, not flowery language
+   - Include specific details: plant varieties, locations, dates, quantities
+   - Example (good): "Picked up Bachelor Button 'Blue Boy' seeds at Wal-Mart."
+   - Example (avoid): "We discovered the most enchanting azure bachelor buttons that will dance gracefully in the garden breeze."
+
+2. **Keep it Concise**
+   - Aim for 1-3 sentences per post
+   - State facts clearly without embellishment
+   - Let the images speak for themselves
+
+3. **Include Relevant Details**
+   - Plant varieties and scientific names when known
+   - Source/vendor information (where purchased)
+   - Specific observations (growth progress, conditions, etc.)
+   - Practical information that helps readers
+
 ## Testing and Validation
 
 Since this is a static site without a build process:
@@ -88,6 +110,55 @@ When creating Pull Requests:
 - The site automatically deploys from the main branch
 - Changes may take a few minutes to appear after merge
 - Test locally before pushing to ensure proper rendering
+
+## Image Orientation Verification
+
+**IMPORTANT**: Before adding images to blog posts, verify proper orientation.
+
+### When to Check Image Orientation
+
+Images containing **text** or **people** must be checked to ensure they are upright:
+
+1. **Images with Text** (seed packets, signs, labels, books, etc.)
+   - Text should be readable without tilting your head
+   - Letters should be right-side up
+   - If rotated, use ImageMagick to auto-orient or manually rotate
+
+2. **Images with People**
+   - People should be standing upright
+   - Faces should be oriented correctly
+   - If rotated, fix orientation before processing
+
+### How to Fix Image Orientation
+
+#### Automatic Fix (Recommended):
+```bash
+# ImageMagick auto-orient based on EXIF data
+convert input.jpeg -auto-orient output.jpeg
+```
+
+#### Manual Rotation (if needed):
+```bash
+# Rotate 90° clockwise
+convert input.jpeg -rotate 90 output.jpeg
+
+# Rotate 90° counter-clockwise
+convert input.jpeg -rotate -90 output.jpeg
+
+# Rotate 180°
+convert input.jpeg -rotate 180 output.jpeg
+```
+
+### Verification Checklist
+
+Before committing images with text or people:
+- [ ] View the image in the browser or image viewer
+- [ ] Confirm text is readable right-side up
+- [ ] Confirm people are standing upright
+- [ ] If incorrect, apply auto-orient or manual rotation
+- [ ] Verify the corrected image displays properly
+
+**Note**: Landscape photos, flowers, and objects without text/people don't require orientation checks.
 
 ## Image Optimization Guidelines
 

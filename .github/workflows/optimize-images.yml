@@ -90,6 +90,11 @@ jobs:
             
             echo "Processing $img ($ORIGINAL_SIZE_MB MB, $ORIGINAL_DIMS)..."
             
+            # Auto-orient image based on EXIF data (fixes rotated photos)
+            echo "  Auto-orienting image..."
+            convert "$img" -auto-orient "$img.tmp"
+            mv "$img.tmp" "$img"
+            
             # 1. Web version (1920px max width, maintain aspect ratio)
             echo "  Creating web version..."
             convert "$img" -resize "1920x>" -quality 85 "images/$TARGET_DATE/${BASENAME}-web.jpeg"
