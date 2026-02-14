@@ -13,23 +13,34 @@ Flowers/
 │   └── README.md       # Documentation for adding new images
 ├── index.html          # Main blog page
 ├── about.html          # About page
+├── shop.html           # Shop page
 ├── styles.css          # Site styles
+├── _config.yml         # Jekyll configuration
 └── README.md           # This file
 ```
 
 ## Adding Images to Blog Entries
 
-### 🚀 Automated Method (Easiest)
+### 🚀 Automated Method (Recommended)
 
 1. Drop your raw images in the **root directory**
 2. Say to Copilot: **"Optimize new images"**
 3. Or manually trigger: [Actions > Optimize Images](https://github.com/enfcyco/Flowers/actions/workflows/optimize-images.yml)
 
 The workflow will automatically:
-- Generate web, Instagram, and Facebook versions
+- Generate 3 optimized versions with suffixes:
+  - `filename-web.jpeg` (for website, 1920px max width)
+  - `filename-instagram.jpeg` (1080x1080 square)
+  - `filename-facebook.jpeg` (1200x630 landscape)
 - Move them to `images/YYYY-MM-DD/`
-- Remove originals
+- Remove originals from root
 - Show optimization stats
+
+**Using optimized images in blog posts:**
+```html
+<!-- Use the -web version for blog posts -->
+<img src="images/2026-02-08/photo-web.jpeg" alt="Description">
+```
 
 See [QUICK-START-IMAGE-OPTIMIZATION.md](QUICK-START-IMAGE-OPTIMIZATION.md) for details.
 
@@ -40,12 +51,14 @@ See [QUICK-START-IMAGE-OPTIMIZATION.md](QUICK-START-IMAGE-OPTIMIZATION.md) for d
 
 ### Manual Method
 
-Images are organized by date in the `images/` directory:
+If you prefer to optimize and add images manually:
 
 1. Create a new directory in `images/` with the date in `YYYY-MM-DD` format
 2. **OPTIMIZE images before adding** (see Performance section below)
-3. Add optimized image files to that directory
+3. Add optimized image files to that directory (no suffix needed for manual method)
 4. Reference them in your HTML: `<img src="images/YYYY-MM-DD/filename.jpeg" alt="Description">`
+
+**Note:** The automated workflow creates files with `-web`, `-instagram`, and `-facebook` suffixes. The manual method typically uses the base filename without suffixes (as seen in existing blog posts).
 
 See `images/README.md` for detailed optimization instructions.
 
