@@ -1,0 +1,68 @@
+name: Convert Image In Place
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_number:
+        description: 'Image number (e.g. 7683 for IMG_7683.jpeg)'
+        required: true
+        type: string
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install image tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick jpegoptim
+
+      - name: Convert image in place
+        run: |
+          IMAGE_NUMBER="${{ inputs.image_number }}"
+
+          # Find matching file in root (case-insensitive, supports .jpeg and .jpg)
+          IMGFILE=$(find . -maxdepth 1 -type f \( -iname "IMG_${IMAGE_NUMBER}.jpeg" -o -iname "IMG_${IMAGE_NUMBER}.jpg" \) | head -1)
+
+          if [ -z "$IMGFILE" ]; then
+            echo "ERROR: No file matching IMG_${IMAGE_NUMBER}.jpeg (or .jpg) found in root directory."
+            exit 1
+          fi
+
+          echo "Found: $IMGFILE"
+
+          ORIGINAL_SIZE=$(stat -c%s "$IMGFILE")
+          ORIGINAL_DIMS=$(identify -format "%wx%h" "$IMGFILE")
+          ORIGINAL_SIZE_MB=$(echo "scale=2; $ORIGINAL_SIZE / 1024 / 1024" | bc)
+          echo "Original: ${ORIGINAL_SIZE_MB}MB ($ORIGINAL_DIMS)"
+
+          # Auto-orient, resize to max 1920px wide, compress to quality 85
+          convert "$IMGFILE" -auto-orient -resize "1920x>" -quality 85 "$IMGFILE.tmp"
+          jpegoptim --max=85 --strip-all "$IMGFILE.tmp" > /dev/null 2>&1
+          mv "$IMGFILE.tmp" "$IMGFILE"
+
+          NEW_SIZE=$(stat -c%s "$IMGFILE")
+          NEW_DIMS=$(identify -format "%wx%h" "$IMGFILE")
+          NEW_SIZE_KB=$(echo "scale=0; $NEW_SIZE / 1024" | bc)
+          REDUCTION=$(echo "scale=0; 100 - ($NEW_SIZE * 100 / $ORIGINAL_SIZE)" | bc)
+
+          echo "Converted: ${NEW_SIZE_KB}KB ($NEW_DIMS) — ${REDUCTION}% smaller"
+
+      - name: Commit converted image
+        run: |
+          IMAGE_NUMBER="${{ inputs.image_number }}"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add -u
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Convert IMG_${IMAGE_NUMBER} in place (resize 1920px, quality 85)"
+          git push
