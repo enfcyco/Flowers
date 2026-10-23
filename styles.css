@@ -191,6 +191,15 @@ article img.small-image {
     max-width: 22.5%;
 }
 
+article:has(> img:only-of-type:not(.small-image)) {
+    max-width: 760px;
+    margin: 0 auto 2rem;
+}
+
+article:has(> img:only-of-type:not(.small-image)) img {
+    max-width: calc(100% - 1rem);
+}
+
 .article-decoration {
     position: absolute;
     top: 1rem;
