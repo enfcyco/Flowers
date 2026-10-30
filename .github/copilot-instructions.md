@@ -27,6 +27,11 @@ Image size and orientation are required checks, not optional optimizations.
   or people must be upright and readable. Apply EXIF auto-orientation first
   when needed; rotate manually only when the image itself is still incorrectly
   oriented. Confirm the saved result, not just the source.
+- Preserve the source color profile or use color-managed conversion when
+  changing image formats or profiles. When converting wide-gamut images such as
+  Display P3 to sRGB, explicitly convert to sRGB rather than simply discarding
+  the source profile. Inspect the saved output in the page preview for
+  unexpected color or brightness shifts.
 - Optimize website images as JPEG at quality 85, preserving aspect ratio and
   keeping the width at or below 1920 pixels. Do not upscale smaller images.
 - After optimization, inspect the actual output dimensions and file size.
