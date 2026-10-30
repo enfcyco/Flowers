@@ -67,6 +67,9 @@ appropriate to the change:
 
 ## Pull requests
 
+Always create pull requests as drafts, so they are clearly marked as work in
+progress for review.
+
 For visual or layout changes, include before-and-after screenshots in the PR
 description when actual screenshot files can be captured. For responsive
 changes, capture desktop (about 1200 x 900) and mobile (about 375 x 667).
