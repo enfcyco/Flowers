@@ -15,6 +15,8 @@ unless requested.
 - Keep blog entries in reverse chronological order. Format dates as, for
   example, `Aug 29 2026`. Use a friendly, factual tone and concise descriptions;
   include specific varieties, sources, quantities, or observations when known.
+- Prefer concise, direct post descriptions that do not start with "We"; follow
+  the established journal style.
 - Do not change contact information, the color scheme, or `_config.yml` without
   the user's permission and a clear reason.
 - Update the README when adding pages or making a significant feature change.
