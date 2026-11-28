@@ -16,24 +16,26 @@ The workflow can be triggered in two ways:
 
 #### Option A: Using GitHub CLI (if available)
 ```bash
-gh workflow run optimize-images.yml
+gh workflow run optimize-images.yml --ref <branch> -f recipe_file=<recipe-filename>
 ```
 
 #### Option B: Tell the user how to trigger it
-Since we're in a sandboxed environment, inform the user:
+If you cannot dispatch the workflow, tell the user:
 
 "I found [N] image(s) in the root directory: [list filenames]
 
 To optimize these images:
 1. Go to the [Actions tab](https://github.com/enfcyco/Flowers/actions/workflows/optimize-images.yml)
-2. Click 'Run workflow'
-3. Click the green 'Run workflow' button (leave inputs empty to auto-detect images)
+2. Select the branch containing the original images.
+3. Optionally enter the recipe/entry filename, such as `pumpkin-soup.html`, to store results in `images/pumpkin-soup/`. Leave it blank for the existing dated folder.
+4. Click the green 'Run workflow' button.
 
 The workflow will:
 - Generate web, Instagram, and Facebook versions
-- Move them to images/[today's date]/
+- Move them to `images/[recipe-file-stem]/` or `images/[today's date]/`
 - Remove the originals from root
 - Show optimization statistics
+- Commit the results to the selected branch
 
 Alternatively, I can guide you through manual optimization if you prefer."
 
@@ -58,7 +60,7 @@ jpegoptim --max=85 --strip-all image-facebook.jpeg
 
 After the workflow runs:
 - Original images removed from root
-- Three versions in `images/YYYY-MM-DD/`:
+- Three versions in `images/<recipe-file-stem>/` when a recipe filename was supplied, or `images/YYYY-MM-DD/` otherwise:
   - `filename-web.jpeg` (1920px max, for website)
   - `filename-instagram.jpeg` (1080x1080 square)
   - `filename-facebook.jpeg` (1200x630 landscape)
@@ -72,4 +74,6 @@ After the workflow runs:
 - Instagram: `IMG_5536-instagram.jpeg`
 - Facebook: `IMG_5536-facebook.jpeg`
 
-All images go into: `images/YYYY-MM-DD/` (date from workflow or today)
+All images go into `images/<recipe-file-stem>/` when a recipe filename is supplied; otherwise they go into `images/YYYY-MM-DD/` (date from workflow or today).
+
+This site currently stores its blog entries in `index.html`, so use a descriptive filename-style entry slug, such as `pumpkin-soup.html`, until entries have separate files.
