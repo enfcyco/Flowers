@@ -11,6 +11,10 @@ on:
         description: 'Target date directory (YYYY-MM-DD format, defaults to today)'
         required: false
         type: string
+      recipe_file:
+        description: 'Optional recipe filename (for example, apple-pie.html); outputs go in images/apple-pie/'
+        required: false
+        type: string
 
 jobs:
   optimize:
@@ -29,40 +33,72 @@ jobs:
           
       - name: Optimize images
         id: optimize
+        env:
+          IMAGE_LIST: ${{ inputs.images }}
+          IMAGE_DATE: ${{ inputs.date }}
+          RECIPE_FILE: ${{ inputs.recipe_file }}
         run: |
-          # Set target date (use input or today's date)
-          if [ -n "${{ inputs.date }}" ]; then
-            TARGET_DATE="${{ inputs.date }}"
+          set -euo pipefail
+
+          if [ -n "$RECIPE_FILE" ] && [ -n "$IMAGE_DATE" ]; then
+            echo "ERROR: Choose either a recipe filename or a date, not both."
+            exit 1
+          fi
+
+          if [ -n "$RECIPE_FILE" ]; then
+            if [[ "$RECIPE_FILE" == */* || "$RECIPE_FILE" == *\\* ]]; then
+              echo "ERROR: Enter only the recipe filename, not a path."
+              exit 1
+            fi
+            RECIPE_NAME="$RECIPE_FILE"
+            if [[ "$RECIPE_NAME" == *.* && "$RECIPE_NAME" != .* ]]; then
+              RECIPE_NAME="${RECIPE_NAME%.*}"
+            fi
+            if [[ ! "$RECIPE_NAME" =~ ^[A-Za-z0-9]([A-Za-z0-9._\ -]*[A-Za-z0-9])?$ ]]; then
+              echo "ERROR: Recipe filename must use letters, numbers, spaces, dots, underscores, or hyphens."
+              exit 1
+            fi
+            TARGET_DIRECTORY="images/$RECIPE_NAME"
+          elif [ -n "$IMAGE_DATE" ]; then
+            if [[ ! "$IMAGE_DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+              echo "ERROR: Date must use YYYY-MM-DD format."
+              exit 1
+            fi
+            TARGET_DIRECTORY="images/$IMAGE_DATE"
           else
-            TARGET_DATE=$(date +%Y-%m-%d)
+            TARGET_DIRECTORY="images/$(date +%Y-%m-%d)"
           fi
           
-          echo "Target date: $TARGET_DATE"
+          echo "Target directory: $TARGET_DIRECTORY"
           
           # Create target directory
-          mkdir -p "images/$TARGET_DATE"
+          mkdir -p "$TARGET_DIRECTORY"
           
           # Determine which images to process
-          if [ -n "${{ inputs.images }}" ]; then
+          if [ -n "$IMAGE_LIST" ]; then
             # Process specified images
-            IFS=',' read -ra IMAGE_ARRAY <<< "${{ inputs.images }}"
+            IFS=',' read -ra IMAGE_ARRAY <<< "$IMAGE_LIST"
             IMAGES=()
             for img in "${IMAGE_ARRAY[@]}"; do
               # Trim whitespace
               img=$(echo "$img" | xargs)
+              if [[ "$img" == */* || "$img" == *\\* ]]; then
+                echo "ERROR: Image inputs must be filenames in the repository root: $img"
+                exit 1
+              fi
               [ -f "$img" ] && IMAGES+=("$img")
             done
           else
             # Auto-detect JPEG/JPG images in root directory using find for safety
             IMAGES=()
             while IFS= read -r -d '' file; do
-              IMAGES+=("$file")
+              IMAGES+=("${file#./}")
             done < <(find . -maxdepth 1 -type f \( -iname "*.jpeg" -o -iname "*.jpg" \) -print0)
           fi
           
           if [ ${#IMAGES[@]} -eq 0 ]; then
             echo "ERROR: No images found to optimize"
-            echo "Please add images to the root directory or specify image names"
+            echo "Add images to the repository root or specify image filenames."
             exit 1
           fi
           
@@ -92,31 +128,32 @@ jobs:
             
             # Auto-orient image based on EXIF data (fixes rotated photos)
             echo "  Auto-orienting image..."
-            convert "$img" -auto-orient "$img.tmp"
-            mv "$img.tmp" "$img"
+            ORIENTED_IMAGE="${img}.oriented.jpeg"
+            convert "$img" -auto-orient "$ORIENTED_IMAGE"
+            mv "$ORIENTED_IMAGE" "$img"
             
             # 1. Web version (1920px max width, maintain aspect ratio)
             echo "  Creating web version..."
-            convert "$img" -resize "1920x>" -quality 85 "images/$TARGET_DATE/${BASENAME}-web.jpeg"
-            jpegoptim --max=85 --strip-all "images/$TARGET_DATE/${BASENAME}-web.jpeg" > /dev/null 2>&1
-            WEB_SIZE=$(stat -c%s "images/$TARGET_DATE/${BASENAME}-web.jpeg")
+            convert "$img" -resize "1920x>" -quality 85 "$TARGET_DIRECTORY/${BASENAME}-web.jpeg"
+            jpegoptim --max=85 --strip-all "$TARGET_DIRECTORY/${BASENAME}-web.jpeg" > /dev/null 2>&1
+            WEB_SIZE=$(stat -c%s "$TARGET_DIRECTORY/${BASENAME}-web.jpeg")
             WEB_SIZE_KB=$(echo "scale=0; $WEB_SIZE / 1024" | bc)
-            WEB_DIMS=$(identify -format "%wx%h" "images/$TARGET_DATE/${BASENAME}-web.jpeg")
+            WEB_DIMS=$(identify -format "%wx%h" "$TARGET_DIRECTORY/${BASENAME}-web.jpeg")
             WEB_REDUCTION=$(echo "scale=0; 100 - ($WEB_SIZE * 100 / $ORIGINAL_SIZE)" | bc)
             
             # 2. Instagram version (1080x1080 square crop, centered)
             echo "  Creating Instagram version..."
-            convert "$img" -resize "1080x1080^" -gravity center -extent 1080x1080 -quality 85 "images/$TARGET_DATE/${BASENAME}-instagram.jpeg"
-            jpegoptim --max=85 --strip-all "images/$TARGET_DATE/${BASENAME}-instagram.jpeg" > /dev/null 2>&1
-            INSTAGRAM_SIZE=$(stat -c%s "images/$TARGET_DATE/${BASENAME}-instagram.jpeg")
+            convert "$img" -resize "1080x1080^" -gravity center -extent 1080x1080 -quality 85 "$TARGET_DIRECTORY/${BASENAME}-instagram.jpeg"
+            jpegoptim --max=85 --strip-all "$TARGET_DIRECTORY/${BASENAME}-instagram.jpeg" > /dev/null 2>&1
+            INSTAGRAM_SIZE=$(stat -c%s "$TARGET_DIRECTORY/${BASENAME}-instagram.jpeg")
             INSTAGRAM_SIZE_KB=$(echo "scale=0; $INSTAGRAM_SIZE / 1024" | bc)
             INSTAGRAM_REDUCTION=$(echo "scale=0; 100 - ($INSTAGRAM_SIZE * 100 / $ORIGINAL_SIZE)" | bc)
             
             # 3. Facebook version (1200x630 landscape crop)
             echo "  Creating Facebook version..."
-            convert "$img" -resize "1200x630^" -gravity center -extent 1200x630 -quality 85 "images/$TARGET_DATE/${BASENAME}-facebook.jpeg"
-            jpegoptim --max=85 --strip-all "images/$TARGET_DATE/${BASENAME}-facebook.jpeg" > /dev/null 2>&1
-            FACEBOOK_SIZE=$(stat -c%s "images/$TARGET_DATE/${BASENAME}-facebook.jpeg")
+            convert "$img" -resize "1200x630^" -gravity center -extent 1200x630 -quality 85 "$TARGET_DIRECTORY/${BASENAME}-facebook.jpeg"
+            jpegoptim --max=85 --strip-all "$TARGET_DIRECTORY/${BASENAME}-facebook.jpeg" > /dev/null 2>&1
+            FACEBOOK_SIZE=$(stat -c%s "$TARGET_DIRECTORY/${BASENAME}-facebook.jpeg")
             FACEBOOK_SIZE_KB=$(echo "scale=0; $FACEBOOK_SIZE / 1024" | bc)
             FACEBOOK_REDUCTION=$(echo "scale=0; 100 - ($FACEBOOK_SIZE * 100 / $ORIGINAL_SIZE)" | bc)
             
@@ -167,7 +204,7 @@ jobs:
           fi
           
           # Create summary
-          SUMMARY="✅ Optimized ${#IMAGES[@]} image(s) in images/$TARGET_DATE/
+          SUMMARY="✅ Optimized ${#IMAGES[@]} image(s) in $TARGET_DIRECTORY/
           $STATS_OUTPUT
           Total space saved: ${TOTAL_SAVED_MB}MB
           Load time improvement (3G): ${ORIGINAL_LOAD_FORMATTED} → ${OPTIMIZED_LOAD_FORMATTED}"
@@ -176,14 +213,14 @@ jobs:
           
           # Save summary for next step
           echo "$SUMMARY" > /tmp/optimization-summary.txt
-          echo "target_date=$TARGET_DATE" >> $GITHUB_OUTPUT
+          echo "target_directory=$TARGET_DIRECTORY" >> "$GITHUB_OUTPUT"
           
       - name: Commit optimized images
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add images/
-          git commit -m "Add optimized images to images/${{ steps.optimize.outputs.target_date }}
+          git add -A
+          git commit -m "Add optimized images to ${{ steps.optimize.outputs.target_directory }}
           
           $(cat /tmp/optimization-summary.txt)"
           git push
@@ -196,4 +233,4 @@ jobs:
           cat /tmp/optimization-summary.txt
           echo ""
           echo "Images have been committed and pushed to the repository."
-          echo "View them at: images/${{ steps.optimize.outputs.target_date }}/"
+          echo "View them at: ${{ steps.optimize.outputs.target_directory }}/"

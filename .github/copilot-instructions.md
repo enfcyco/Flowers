@@ -43,16 +43,24 @@ Image size and orientation are required checks, not optional optimizations.
   file; 400-800 KB is typical, not a guaranteed limit. Keep total page image
   weight reasonable for mobile.
 - The `Optimize Images` GitHub Actions workflow is the preferred automated
-  route for `.jpg` and `.jpeg` files placed in the repository root. It creates
-  `-web.jpeg` (maximum 1920 pixels wide), `-instagram.jpeg` (1080 x 1080), and
-  `-facebook.jpeg` (1200 x 630) files under `images/YYYY-MM-DD/`, then removes
-  the root originals and commits the results to the workflow's selected branch.
-  Check the workflow's target branch and date before dispatching it, and verify
-  its result before referencing the generated files. Do not say it was run if
-  it was not.
+  route for `.jpg` and `.jpeg` files committed in the repository root. It
+  creates `-web.jpeg` (maximum 1920 pixels wide), `-instagram.jpeg` (1080 x
+  1080), and `-facebook.jpeg` (1200 x 630) files under
+  `images/<recipe-file-stem>/` when a recipe filename is supplied, otherwise
+  under `images/YYYY-MM-DD/`. It removes the root originals and commits the
+  results to the workflow's selected branch. This site currently keeps entries
+  in `index.html`; use a descriptive filename-style entry slug until entries
+  have separate files. Check the workflow's target branch and folder before
+  dispatching it, and verify its result before referencing the generated files.
+  Do not say it was run if it was not.
 - Use the `-web.jpeg` image in a blog post and provide meaningful alt text.
   Keep the original in the date folder only when it is needed; do not commit an
   unoptimized upload as the website image.
+- For future recipe pages, place each photo inside its corresponding numbered
+  `<li>` step using a collapsed native `<details class="step-photo">` camera
+  toggle. Include a screen-reader label, meaningful image alt text, and a
+  caption; see `images/README.md` for the markup pattern. Existing blog photos
+  remain inline.
 - For PNGs or when the workflow cannot be used, use an available local image
   tool or ask before choosing another processing route. Do not assume a
   particular operating system or that ImageMagick is installed. If processing

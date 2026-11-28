@@ -23,24 +23,28 @@ Flowers/
 
 ### 🚀 Automated Method (Recommended)
 
-1. Drop your raw images in the **root directory**
-2. Say to Copilot: **"Optimize new images"**
-3. Or manually trigger: [Actions > Optimize Images](https://github.com/enfcyco/Flowers/actions/workflows/optimize-images.yml)
+1. Add your original JPEG/JPG photos to the repository root and commit them to the branch you want to update.
+2. Run [Actions > Optimize Images](https://github.com/enfcyco/Flowers/actions/workflows/optimize-images.yml) on that branch.
+3. Optionally enter the recipe or entry filename (for example, `pumpkin-soup.html`). The workflow stores the outputs in `images/pumpkin-soup/`. If blank, it uses the existing dated folder convention, `images/YYYY-MM-DD/`.
 
 The workflow will automatically:
 - Generate 3 optimized versions with suffixes:
   - `filename-web.jpeg` (for website, 1920px max width)
   - `filename-instagram.jpeg` (1080x1080 square)
   - `filename-facebook.jpeg` (1200x630 landscape)
-- Move them to `images/YYYY-MM-DD/`
+- Put them in the recipe/entry folder, or `images/YYYY-MM-DD/` when no filename is supplied
 - Remove originals from root
 - Show optimization stats
 
 **Using optimized images in blog posts:**
 ```html
 <!-- Use the -web version for blog posts -->
-<img src="images/2026-02-08/photo-web.jpeg" alt="Description">
+<img src="images/pumpkin-soup/photo-web.jpeg" alt="Description">
 ```
+
+Blog entries currently live together in `index.html`, so there is no separate recipe file to detect. Until entries have their own files, enter a descriptive entry slug with an `.html` suffix (such as `pumpkin-soup.html`); the workflow uses its filename stem for the folder.
+
+For future recipe pages, add each photo inside its corresponding numbered step and collapsed behind the camera toggle. See [the image guide](images/README.md#collapsed-photos-in-recipe-steps) for the accessible HTML pattern. Existing blog photos stay inline.
 
 See [QUICK-START-IMAGE-OPTIMIZATION.md](QUICK-START-IMAGE-OPTIMIZATION.md) for details.
 
